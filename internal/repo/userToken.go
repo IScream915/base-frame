@@ -23,9 +23,7 @@ type UserToken interface {
 }
 
 func NewUserToken(client redis.UniversalClient) UserToken {
-	return &userToken{
-		client: client,
-	}
+	return &userToken{client: client}
 }
 
 type userToken struct {

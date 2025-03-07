@@ -1,6 +1,9 @@
 package pcontext
 
 import (
+	"base_frame/internal/repo/models"
+	"context"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
@@ -23,4 +26,22 @@ func GetRequestToken(c *gin.Context) string {
 		return tokens[1]
 	}
 	return ""
+}
+
+func GetUserTokenFromCtx(ctx context.Context) (*models.UserToken, error) {
+	// 从context中拿到userToken
+	user := ctx.Value(CtxUserKey)
+	// 校验
+	if user == nil {
+		return nil, errors.New("user not found in context")
+	}
+	userInfo, ok := user.(*models.UserToken)
+	if !ok {
+		return nil, errors.New("user not found in context")
+	}
+	// 无效的userID
+	if userInfo.UserID == 0 {
+		return nil, errors.New("user not found in context")
+	}
+	return userInfo, nil
 }

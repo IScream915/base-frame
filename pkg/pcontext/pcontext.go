@@ -35,6 +35,7 @@ func GetUserTokenFromCtx(ctx context.Context) (*models.UserToken, error) {
 	if user == nil {
 		return nil, errors.New("user not found in context")
 	}
+	// token类型合法性
 	userInfo, ok := user.(*models.UserToken)
 	if !ok {
 		return nil, errors.New("user not found in context")

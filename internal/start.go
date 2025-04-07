@@ -2,6 +2,7 @@ package internal
 
 import (
 	"base_frame/internal/middleware"
+	"base_frame/internal/repo/models"
 	"base_frame/pkg/common/config"
 	"base_frame/pkg/db/mysqlutil"
 	"base_frame/pkg/db/redisutil"
@@ -43,7 +44,7 @@ func Start(ctx context.Context, config *config.Config) error {
 		injectRepo(),
 		fx.Invoke(func(db *gorm.DB) {
 			//CREATE DATABASE IF NOT EXISTS {{DB}};
-			_ = db.AutoMigrate()
+			_ = db.AutoMigrate(models.User{})
 		}),
 		injectService(),
 		injectApi(),

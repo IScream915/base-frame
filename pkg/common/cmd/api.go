@@ -12,7 +12,7 @@ import (
 	"log"
 )
 
-const DefaultConfigPath = "config/config.yaml"
+const DefaultConfigPath = "dev/config.yaml"
 
 type ApiCmd struct {
 	*cmd.RootCmd

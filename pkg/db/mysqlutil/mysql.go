@@ -16,7 +16,7 @@ type Config struct {
 	Port         int    `mapstructure:"port"`
 	User         string `mapstructure:"user"`
 	Password     string `mapstructure:"password"`
-	DbName       string `mapstructure:"db_nae"`
+	DbName       string `mapstructure:"db_name"`
 	MaxOpenConns int    `mapstructure:"max_open_conns"`
 	MaxIdleConns int    `mapstructure:"max_idle_conns"`
 	MaxLifetime  int    `mapstructure:"max_lifetime"` // 单位秒

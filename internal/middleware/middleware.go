@@ -17,6 +17,7 @@ func Auth(tokenRepo repo.UserToken) gin.HandlerFunc {
 			ticket, _ = c.GetQuery("token")
 		}
 		if ticket == "" {
+			// TODO c.Abort, return, c.AbortWithStatusJSON 三者之间的关系和不同
 			// 请求头和请求体中都没有token
 			// c.JSON() 本身不会终止函数执行，它只是向 ResponseWriter 发送了 HTTP 响应内容
 			// 但函数的执行仍然会继续，所以仍然需要 c.Abort() 和 return 来确保请求处理结束，不会执行后续的中间件或处理函数。

@@ -1,31 +1,31 @@
 package cmd
 
 import (
-	"base_frame/internal"
-	"base_frame/pkg/config"
-	"context"
+	"fmt"
 	"github.com/spf13/cobra"
 )
 
+const (
+	FlagConfPath = "config"
+)
+
 type RootCmd struct {
-	command cobra.Command
-	ctx     context.Context // 设置基本的上下文
-	config  config.Config   // 配置项
+	Command     cobra.Command
+	processName string
 }
 
-func NewApiCmd() *RootCmd {
-	var ret RootCmd
-	ret.ctx = context.WithValue(context.Background(), "version", "test_version")
-	ret.command.RunE = func(cmd *cobra.Command, args []string) error {
-		return ret.runE()
+func NewRootCmd(processName string) *RootCmd {
+	rootCmd := &RootCmd{
+		processName: processName,
 	}
-	return &ret
-}
+	cmd := cobra.Command{
+		Use:           fmt.Sprintf("Start %s application", processName),
+		Long:          fmt.Sprintf(`Start %s `, processName),
+		SilenceUsage:  true,
+		SilenceErrors: false,
+	}
+	cmd.Flags().StringP(FlagConfPath, "c", "", "path of config file")
 
-func (a *RootCmd) runE() error {
-	return internal.Start(a.ctx, &a.config)
-}
-
-func (a *RootCmd) Exec() error {
-	return a.command.Execute()
+	rootCmd.Command = cmd
+	return rootCmd
 }

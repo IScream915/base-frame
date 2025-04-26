@@ -28,13 +28,24 @@ func NewGinEngine() *gin.Engine {
 	// 注册自定义参数验证器
 	validation.RegisterCustomValidation()
 	// 设置路由
-	SetRoute()
+	SetRoute(
+		engine,
+	)
 	return engine
 
 }
 
-func SetRoute() {
-
+func SetRoute(
+	router gin.IRouter,
+) {
+	v1 := router.Group("/v1")
+	{
+		// 无需验证登录的接口
+		userNotLogin := v1.Group("/user")
+		{
+			userNotLogin.POST("/login")
+		}
+	}
 }
 
 func Start(ctx context.Context, config *config.Config) error {

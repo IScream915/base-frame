@@ -1,8 +1,11 @@
 package internal
 
 import (
+	"base_frame/internal/api"
 	"base_frame/internal/middleware"
+	"base_frame/internal/repo"
 	"base_frame/internal/repo/models"
+	"base_frame/internal/services"
 	"base_frame/pkg/common/config"
 	"base_frame/pkg/db/mysqlutil"
 	"base_frame/pkg/db/redisutil"
@@ -16,7 +19,9 @@ import (
 )
 
 // NewGinEngine 构造一个新的Gin引擎，用于生成一个新的经过初始化和配置的Gin引擎
-func NewGinEngine() *gin.Engine {
+func NewGinEngine(
+	userApi api.User,
+) *gin.Engine {
 	gin.SetMode(gin.DebugMode)
 	// 启用自定义的引擎
 	engine := gin.New()
@@ -30,6 +35,7 @@ func NewGinEngine() *gin.Engine {
 	// 设置路由
 	SetRoute(
 		engine,
+		userApi,
 	)
 	return engine
 
@@ -37,6 +43,7 @@ func NewGinEngine() *gin.Engine {
 
 func SetRoute(
 	router gin.IRouter,
+	userApi api.User,
 ) {
 	v1 := router.Group("/v1")
 	{
@@ -44,6 +51,9 @@ func SetRoute(
 		userNotLogin := v1.Group("/user")
 		{
 			userNotLogin.POST("/login")
+			userNotLogin.POST("/create", userApi.Create)
+			userNotLogin.POST("/update", userApi.Update)
+			userNotLogin.DELETE("/delete", userApi.Delete)
 		}
 	}
 }
@@ -106,15 +116,22 @@ func injectComponent() fx.Option {
 
 // 注入仓储实现
 func injectRepo() fx.Option {
-	return fx.Provide()
+	return fx.Provide(
+		repo.NewUserToken,
+		repo.NewUser,
+	)
 }
 
 // 注入service
 func injectService() fx.Option {
-	return fx.Provide()
+	return fx.Provide(
+		services.NewUser,
+	)
 }
 
 // 注入API
 func injectApi() fx.Option {
-	return fx.Provide()
+	return fx.Provide(
+		api.NewUser,
+	)
 }

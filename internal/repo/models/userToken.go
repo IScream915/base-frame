@@ -3,7 +3,7 @@ package models
 import "encoding/json"
 
 type UserToken struct {
-	UserID    uint   `json:"user_id"`    // 用户ID
+	UserID    uint64 `json:"user_id"`    // 用户ID
 	Account   string `json:"account"`    // 账号
 	Nickname  string `json:"nickname"`   // 昵称
 	ExpiredAt int64  `json:"expired_at"` // 过期时间，时间戳

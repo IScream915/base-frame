@@ -55,8 +55,9 @@ func SetRoute(
 		userNotLogin := v1.Group("/user")
 		{
 			userNotLogin.POST("/accountLogin", userApi.AccountLogin)
+			userNotLogin.POST("/emailSend", userApi.EmailSend)
 			userNotLogin.POST("/emailLogin", userApi.EmailLogin)
-
+			userNotLogin.POST("/create", userApi.Create)
 		}
 		// 需要验证登录的接口
 		{
@@ -64,9 +65,8 @@ func SetRoute(
 			userNeedLogin.Use(middleware.Auth(tokenRepo))
 			{
 				userNeedLogin.POST("/logout", userApi.Logout)
-				userNeedLogin.POST("/create", userApi.Create)
+
 				userNeedLogin.POST("/update", userApi.Update)
-				//userNeedLogin.DELETE("/delete", userApi.Delete)
 			}
 		}
 	}

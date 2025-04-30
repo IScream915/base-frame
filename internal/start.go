@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"base_frame/global"
 	"base_frame/internal/api"
 	"base_frame/internal/middleware"
 	"base_frame/internal/repo"
@@ -21,6 +22,7 @@ import (
 // NewGinEngine 构造一个新的Gin引擎，用于生成一个新的经过初始化和配置的Gin引擎
 func NewGinEngine(
 	userApi api.User,
+	tokenRepo repo.UserToken,
 ) *gin.Engine {
 	gin.SetMode(gin.DebugMode)
 	// 启用自定义的引擎
@@ -36,6 +38,7 @@ func NewGinEngine(
 	SetRoute(
 		engine,
 		userApi,
+		tokenRepo,
 	)
 	return engine
 
@@ -44,16 +47,27 @@ func NewGinEngine(
 func SetRoute(
 	router gin.IRouter,
 	userApi api.User,
+	tokenRepo repo.UserToken,
 ) {
 	v1 := router.Group("/v1")
 	{
 		// 无需验证登录的接口
 		userNotLogin := v1.Group("/user")
 		{
-			userNotLogin.POST("/login")
-			userNotLogin.POST("/create", userApi.Create)
-			userNotLogin.POST("/update", userApi.Update)
-			userNotLogin.DELETE("/delete", userApi.Delete)
+			userNotLogin.POST("/accountLogin", userApi.AccountLogin)
+			userNotLogin.POST("/emailLogin", userApi.EmailLogin)
+
+		}
+		// 需要验证登录的接口
+		{
+			userNeedLogin := v1.Group("/user")
+			userNeedLogin.Use(middleware.Auth(tokenRepo))
+			{
+				userNeedLogin.POST("/logout", userApi.Logout)
+				userNeedLogin.POST("/create", userApi.Create)
+				userNeedLogin.POST("/update", userApi.Update)
+				//userNeedLogin.DELETE("/delete", userApi.Delete)
+			}
 		}
 	}
 }
@@ -97,9 +111,9 @@ func Start(ctx context.Context, config *config.Config) error {
 // 注入配置
 func injectConfig(ctx context.Context, cfg *config.Config) fx.Option {
 	return fx.Provide(
-		func() *config.Config { return cfg },
 		func() *mysqlutil.Config { return cfg.Mysql },
 		func() *redisutil.Config { return cfg.Redis },
+		func() *config.Config { return cfg },
 		func() context.Context { return ctx },
 	)
 }
@@ -111,6 +125,8 @@ func injectComponent() fx.Option {
 		mysqlutil.NewMysqlClient,
 		// Redis客户端
 		redisutil.NewRedisClient,
+		// 全局配置文件
+		global.NewConfig,
 	)
 }
 

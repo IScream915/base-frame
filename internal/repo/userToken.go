@@ -50,7 +50,7 @@ func (obj *userToken) Save(ctx context.Context, info *models.UserToken) error {
 
 func (obj *userToken) Find(ctx context.Context, ticket string) (*models.UserToken, error) {
 	// 根据ticket从redis中取出用户信息
-	var info *models.UserToken
+	var info models.UserToken
 	// Scan 方法用于将 Redis 返回的数据反序列化为 Go 语言中的数据结构
 	// 这里的 Scan 方法可以使用redis-tag来指定反序列化方向
 	err := obj.client.Get(ctx, ticket).Scan(&info)
@@ -60,7 +60,7 @@ func (obj *userToken) Find(ctx context.Context, ticket string) (*models.UserToke
 		}
 		return nil, err
 	}
-	return info, nil
+	return &info, nil
 }
 
 func (obj *userToken) Delete(ctx context.Context, ticket string) error {

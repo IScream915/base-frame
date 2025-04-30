@@ -10,6 +10,7 @@ import (
 
 type User interface {
 	AccountLogin(c *gin.Context)
+	EmailSend(c *gin.Context)
 	EmailLogin(c *gin.Context)
 	Logout(c *gin.Context)
 	Create(c *gin.Context)
@@ -40,6 +41,23 @@ func (obj *user) AccountLogin(c *gin.Context) {
 	}
 
 	response.Json(c, response.WithData(userToken))
+}
+
+// EmailSend 通过邮箱发送验证码
+func (obj *user) EmailSend(c *gin.Context) {
+	req := &dto.EmailSendReq{}
+	if err := c.ShouldBind(req); err != nil {
+		response.Json(c, response.WithErr(err))
+		return
+	}
+
+	err := obj.svc.EmailSend(c, req)
+	if err != nil {
+		response.Json(c, response.WithErr(err))
+		return
+	}
+
+	response.Json(c, response.WithMsg("success"))
 }
 
 // EmailLogin 采用邮箱验证码形式登录

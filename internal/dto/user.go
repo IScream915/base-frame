@@ -5,8 +5,12 @@ type AccountLoginReq struct {
 	Password string `json:"password" binding:"required"` // 密码
 }
 
+type EmailSendReq struct {
+	Email string `json:"email" binding:"required,email"` //邮箱
+}
+
 type EmailLoginReq struct {
-	Email            string `json:"email" binding:"required"`             // 邮箱
+	Email            string `json:"email" binding:"required,email"`       // 邮箱
 	VerificationCode string `json:"verification_code" binding:"required"` // 验证码
 }
 

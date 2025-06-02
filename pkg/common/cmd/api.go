@@ -12,7 +12,7 @@ import (
 	"log"
 )
 
-const DefaultConfigPath = "dev/config.yaml"
+const DefaultConfigPath = "config/config.yaml"
 
 type ApiCmd struct {
 	*cmd.RootCmd
@@ -36,7 +36,7 @@ func (a *ApiCmd) runE() error {
 	flag.Parse()
 
 	if *configPath == "" {
-		log.Fatal("请使用 -c 参数指定配置文件路径，例如：-c dev/config")
+		log.Fatal("请使用 -c 参数指定配置文件路径，例如：-c config/config")
 	}
 
 	// 使用 Viper 加载配置文件
